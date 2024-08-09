@@ -47,4 +47,12 @@ app.get("/:word/echo", (req, res, next) => {
   res.send({ echo: word });
 });
 
+//Get query parameter input from the client
+// The below format allows for chaining different API methods for the same route
+app.route("/name").get((req, res) => {
+  let firstname = req.query.first;
+  let lastname = req.query.last;
+  res.send({ name: `${firstname} ${lastname}` });
+});
+
 module.exports = app;
