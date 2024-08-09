@@ -27,4 +27,18 @@ app.get("/json", (req, res) => {
     : res.json({ message: "Hello json" });
 });
 
+// Chaining middleware to create a time server
+app.get(
+  "/now",
+  (req, res, next) => {
+    //This is the middleware function
+    req.time = new Date().toString();
+    next();
+  },
+  (req, res) => {
+    //This is the final handler
+    res.send({ time: req.time });
+  }
+);
+
 module.exports = app;
