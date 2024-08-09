@@ -1,15 +1,18 @@
 //load environment variables from .env to process.env
 require("dotenv").config();
+//require body-parses to pare req body data (for POST requests)
+const bodyParser = require("body-parser");
 
 let express = require("express");
 let app = express();
 console.log("Hello World");
 
+// middleware logger, request body parser
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path} - ${req.ip}`);
   //next() allows the server to continue to the next function in the call stack
   next();
-});
+}, bodyParser.urlencoded({ extended: false }));
 
 //Handles all get requests
 app.get("/", (req, res) => {
@@ -49,10 +52,19 @@ app.get("/:word/echo", (req, res, next) => {
 
 //Get query parameter input from the client
 // The below format allows for chaining different API methods for the same route
-app.route("/name").get((req, res) => {
-  let firstname = req.query.first;
-  let lastname = req.query.last;
-  res.send({ name: `${firstname} ${lastname}` });
-});
+// The get request should pull input from query params in the URL
+// the post request should use the input from HTML form which will put variables into request body thanks to bodyParser middleware
+app
+  .route("/name")
+  .get((req, res) => {
+    let firstname = req.query.first;
+    let lastname = req.query.last;
+    res.send({ name: `${firstname} ${lastname}` });
+  })
+  .post((req, res) => {
+    let firstname = req.body.first;
+    let lastname = req.body.last;
+    res.send({ name: `${firstname} ${lastname}` });
+  });
 
 module.exports = app;
